@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Us</title>
+<meta name="description" content="O cantinho fechado de vocês dois: fotos, listas e datas.">
+<meta name="theme-color" content="#b3122a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Us">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="shell" id="shell">
+  <div class="gate" id="gate"></div>
+  <div class="app" id="app" hidden>
+    <div class="main" id="main">
+      <main class="view" id="view"></main>
+      <div id="fab"></div>
+      <section class="panel" id="panel" aria-label="Detalhes"></section>
+      <section class="post" id="viewer" aria-label="Foto ou vídeo"></section>
+    </div>
+    <nav class="tabbar" id="tabbar" aria-label="Abas">
+      <button class="tab" data-tab="feed" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path class="f" d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4Z"/></svg>Feed</button>
+      <button class="tab" data-tab="fotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect class="f" x="3.5" y="5" width="17" height="14" rx="3"/><path d="m3.5 16 5-4.5 4 3.5 3-2.5 5 4" stroke="currentColor"/><circle cx="15.5" cy="9.5" r="1.6" fill="#fff" stroke="currentColor"/></svg>Fotos e vídeos</button>
+      <button class="tab" data-tab="listas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect class="f" x="5" y="3" width="14" height="18" rx="2.5"/><path class="ln" d="M9 9h6M9 13h6M9 17h3"/></svg>Listas</button>
+      <button class="tab" data-tab="cal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect class="f" x="4" y="5" width="16" height="15" rx="3"/><path class="ln" d="M4 10h16"/><path d="M9 3v4M15 3v4"/></svg>Calendário</button>
+    </nav>
+  </div>
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Janela"></div>
+  <div class="progress" id="progress" hidden role="status" aria-live="polite"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <input type="file" id="filepick" hidden>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+DSEG7 Classic Bold (DSEG font family)
+Copyright (c) 2018, keshikan (http://www.keshikan.net)
+Licensed under the SIL Open Font License, Version 1.1.
+https://scripts.sil.org/OFL  |  https://github.com/keshikan/DSEG
+
+Used here only to draw the orange date stamp on the feed photos.

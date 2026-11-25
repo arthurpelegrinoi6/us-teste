@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-20T20:34:56.902Z",
+        "reason": "Rose-tinted #f7eeee surround is part of the red-and-white v2 palette Arthur approved ('Ótimo' 20/11/2026, 'Pode subir para produção')"
+      }
+    ]
+  }
+}
