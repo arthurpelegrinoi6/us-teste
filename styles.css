@@ -570,7 +570,7 @@ a.song-line:active .go{opacity:.7}
 .tabbar{overflow:visible}
 .tab{min-width:0;font-size:11px;letter-spacing:-.01em}
 .tab-tarefas{color:var(--ink-3)}
-.tab-tarefas .tbtn{width:44px;height:44px;margin-top:-14px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;box-shadow:0 0 0 4px #fff,0 6px 14px -5px rgba(179,18,42,.5);transition:box-shadow .2s,transform .2s}
+.tab-tarefas .tbtn{width:44px;height:44px;margin-top:-18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;box-shadow:0 0 0 4px #fff,0 6px 14px -5px rgba(179,18,42,.5);transition:box-shadow .2s,transform .2s}
 .tab-tarefas .tbtn svg{width:24px;height:24px}
 .tab-tarefas:active .tbtn{transform:scale(.95)}
 .tab-tarefas[aria-current="page"] .tbtn{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--rose),0 6px 14px -5px rgba(179,18,42,.5)}
