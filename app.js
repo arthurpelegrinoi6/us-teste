@@ -535,10 +535,9 @@ function enterApp() {
 function render(keep) {
   if (!S.couple) return;
   const y = view.scrollTop;
-  view.innerHTML = { feed: feedHTML, fotos: fotosHTML, listas: listasHTML, cal: calHTML }[UI.tab]();
-  const lAberta = UI.tab === "listas" && UI.openList !== null ? S.lists.find(l => l.id === UI.openList) : null;
+  view.innerHTML = { feed: feedHTML, fotos: fotosHTML, listas: listasHTML, tarefas: tarefasHTML, cal: calHTML }[UI.tab]();
   $("fab").innerHTML = UI.tab === "listas" && UI.openList === null ? `<button class="compose" data-act="novalista" aria-label="Nova lista">${ic("edit", 22)}</button>`
-    : lAberta && lAberta.auto_key === "tasks" ? `<button class="compose" data-act="novatarefa" aria-label="Nova tarefa">${ic("plus", 24, 2.4)}</button>` : "";
+    : UI.tab === "tarefas" && tasksList() ? `<button class="compose" data-act="novatarefa" aria-label="Nova tarefa">${ic("plus", 24, 2.4)}</button>` : "";
   view.scrollTop = keep ? y : 0;
   fitAll();
   document.querySelectorAll(".tab").forEach(t => t.dataset.tab === UI.tab ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current"));
@@ -748,7 +747,7 @@ function sugestoesHTML() {
   return `<div class="ngroup-h">Sugestões</div><div class="sugs">${falta.map(m => `<button class="sug" data-sug="${m.k}"><span class="e" aria-hidden="true">${m.e}</span>${esc(m.t)}</button>`).join("")}</div><p class="sug-h">Toque para criar a lista na hora, já com as seções.</p>`;
 }
 function listasHTML() {
-  if (UI.openList !== null) { const Lo = S.lists.find(l => l.id === UI.openList); const html = Lo && Lo.auto_key === "tasks" ? tarefasHTML() : noteHTML(); if (html) return html; UI.openList = null; }
+  if (UI.openList !== null) { const html = noteHTML(); if (html) return html; UI.openList = null; }
   const row = L => `<button class="nrow" data-list="${L.id}"><b>${esc(L.title)}</b><span><em>${esc(relDay(L.updated_at))}</em>${esc(listPreview(L))}</span></button>`;
   const mL = metasLista();
   const comuns = S.lists.filter(l => l.auto_key !== "tasks" && !(mL && l.id === mL.id));
@@ -757,7 +756,6 @@ function listasHTML() {
   return `<div class="notes-app">
     <div class="nbar" style="background:var(--group)"><span></span><span style="font-weight:600;color:var(--ink-2);font-size:13px">${esc(coupleNames())}</span></div>
     <h1 class="big-title">Listas</h1>
-    ${tarefasCardHTML()}
     ${metasCardHTML()}
     ${!comuns.length ? `<div class="empty-state"><h3>Uma lista para cada vontade</h3><p>Restaurantes para conhecer, filmes, viagens, compras da casa. Toque no lápis para criar a primeira.</p></div>` : ""}
     ${pins.length ? `<div class="ngroup-h">Fixadas</div><div class="ngroup">${pins.map(row).join("")}</div>` : ""}
@@ -835,17 +833,6 @@ function taskRowHTML(t, curto) {
   const od = isOverdue(t);
   return `<div class="citem trow ${t.done ? "done" : ""} ${od ? "od" : ""}" data-item="${t.id}"><button class="cbox" data-check="${t.id}" aria-pressed="${t.done}" aria-label="${t.done ? "Desmarcar" : "Marcar como feita"}: ${esc(t.text)}">${CHECK_SVG}</button><button class="tbody" data-tarefa="${t.id}" aria-label="Abrir a tarefa: ${esc(t.text)}"><span class="tx">${esc(t.text)}</span>${taskMeta(t, curto)}</button></div>`;
 }
-function tarefasCardHTML() {
-  const L = tasksList(); if (!L) return "";
-  const all = taskAll(), open = all.filter(t => !t.done).sort(cmpTask), n = open.length;
-  const late = open.filter(isOverdue).length;
-  const vazio = !n ? `<p class="tvazio">${all.length ? "Tudo em dia." : "Nada pendente por aqui."}<span>${partner() ? `Passe uma tarefa para ${esc(partnerName())} ou anote uma para você.` : "Anote o que falta fazer."}</span></p>` : "";
-  return `<section class="tcard" aria-label="Tarefas">
-    <button class="thead" data-act="vertarefas" aria-label="Abrir todas as tarefas"><span class="tic">${ic("tcheck", 22, 2)}</span><span class="ttl">Tarefas</span><span class="tcount${late ? " hot" : ""}">${n ? (late ? `${plural(n, "aberta", "abertas")}, ${late} atrasada${late > 1 ? "s" : ""}` : plural(n, "aberta", "abertas")) : "em dia"}</span></button>
-    ${n ? open.slice(0, 3).map(t => taskRowHTML(t, true)).join("") : vazio}
-    <div class="tfoot"><button class="tall" data-act="vertarefas">${n > 3 ? `Ver todas (${n})` : "Ver todas"}${ic("next", 14, 2.6)}</button><button class="tadd" data-act="novatarefa" aria-label="Nova tarefa">${ic("plus", 16, 2.6)}Nova tarefa</button></div>
-  </section>`;
-}
 function tarefasHTML() {
   const L = tasksList(); if (!L) return "";
   const all = taskAll(), open = all.filter(t => !t.done).sort(cmpTask), feitas = all.filter(t => t.done).sort((a, b) => String(b.done_at || b.created_at).localeCompare(String(a.done_at || a.created_at)));
@@ -854,7 +841,7 @@ function tarefasHTML() {
   const blocos = grupos.map(([k, nome]) => { const its = open.filter(t => taskGroup(t) === k); return its.length ? `<div class="sec"><div class="ngroup-h">${esc(nome)}<span>${its.length}</span></div>${its.map(t => taskRowHTML(t, false)).join("")}</div>` : ""; }).join("");
   const sub = open.length ? `${plural(open.length, "aberta", "abertas")}${late ? ` · ${late} atrasada${late > 1 ? "s" : ""}` : ""}` : (all.length ? "Tudo em dia." : "");
   return `<div class="lnote tnote">
-    <div class="nbar"><button data-act="voltarlista" class="back" style="color:var(--red);font-size:16px;font-weight:400">${ic("back", 20, 2.4)}Listas</button><span></span></div>
+    <div class="nbar"><span></span><span style="font-weight:600;color:var(--ink-2);font-size:13px">${esc(coupleNames())}</span></div>
     <h1 class="t-title">Tarefas</h1>
     ${sub ? `<p class="t-sub${late ? " hot" : ""}">${sub}</p>` : ""}
     ${!all.length ? `<div class="empty-state"><h3>O que falta fazer, dividido</h3><p>Toque no + para anotar uma tarefa. ${partner() ? `Se for para ${esc(partnerName())}, ${esc(partnerName())} recebe um aviso.` : ""}</p></div>` : ""}
@@ -966,12 +953,12 @@ function openLembrar(id, opts = {}) {
     }
   }, !!SH);
 }
-/* toque no aviso: abre a lista Tarefas na tarefa certa. m=lembrar abre o "Me lembrar"; m=ver abre a tarefa */
+/* toque no aviso: abre a aba Tarefas na tarefa certa. m=lembrar abre o "Me lembrar"; m=ver abre a tarefa */
 async function abrirTarefaDoAviso(id, modo) {
   let t = S.items.find(i => i.id === id);
   if (!t) { try { await loadData(); } catch (e) { } t = S.items.find(i => i.id === id); }
   closePanel(); closeViewer(); closeSheet();
-  const L = tasksList(); if (L) { UI.tab = "listas"; UI.openList = L.id; render(); }
+  if (tasksList()) { UI.tab = "tarefas"; render(); }
   if (!t) { toast("Essa tarefa não existe mais."); return; }
   if (modo === "lembrar" && !t.done) openLembrar(id, { push: true }); else openTarefa(id);
 }
@@ -2524,7 +2511,7 @@ $("main").addEventListener("click", e => {
     "p-feed": () => UI.sel && UI.sel.size && porNoFeed([...UI.sel]).catch(err => toast(friendly(err))),
     "p-salvar-sel": () => UI.sel && UI.sel.size && salvarFotos([...UI.sel].map(findMedia).filter(Boolean)),
     "p-apagar": () => UI.sel && UI.sel.size && apagarFotos([...UI.sel]),
-    novatarefa: () => openTarefa(null), vertarefas: () => { const L = tasksList(); if (L) { UI.openList = L.id; render(); } },
+    novatarefa: () => openTarefa(null), vertarefas: () => { if (tasksList()) { UI.tab = "tarefas"; render(); } },
     feitas: () => { UI.tarefasFeitas = !UI.tarefasFeitas; render(true); },
     novalista: openNewList, novasecao: newSection, darnota: toggleRated, organizar, voltarlista: () => { UI.openList = null; render(); }, fixar: togglePin, apagarlista: deleteList, copiarlista: copyList,
     hoje: () => { const n = todayDate(); UI.calY = n.getFullYear(); UI.calM = n.getMonth(); UI.selDay = ymd(n); render(true); },

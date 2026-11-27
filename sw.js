@@ -1,5 +1,5 @@
 /* Guarda só os arquivos do próprio app. Nunca guarda respostas do Supabase, fontes ou fotos. */
-const VERSAO = "us-v15";
+const VERSAO = "us-v16";
 /* o nome do cache inclui a pasta do app: o app real e a cópia de teste (/us-teste/) moram no mesmo endereço-base
    e não podem apagar o cache um do outro */
 const ESCOPO = self.registration.scope;
