@@ -724,6 +724,7 @@ const MODELOS = [
   { k: "viagens", e: "✈️", t: "Viagens", d: "As que já fizeram e as que sonham fazer", rated: false, kw: ["viage"], secs: () => ["Viagens feitas", "Wishlist"] },
   { k: "livros", e: "📚", t: "Livros", d: "Lendo, lidos e os que querem ler", rated: true, kw: ["livro"], secs: () => ["Lendo", "Lidos", "Queremos ler"] },
   { k: "programas", e: "🎟️", t: "Programas a dois", d: "O que querem fazer e o que já fizeram", rated: false, kw: ["programa"], secs: () => ["Queremos fazer", "Já fizemos"] },
+  { k: "metas", e: "🎯", t: "Metas", d: "Por área: saúde, carreira, finanças e mais", rated: false, kw: ["meta"], secs: () => ["Saúde", "Mental", "Carreira", "Finanças", "Relacionamento", "Lazer"] },
   { k: "presentes", e: "🎁", t: "Presentes", d: "Ideias para cada um", rated: false, kw: ["presente"], secs: () => { const n = S.members.slice(0, 2).map(m => m.display_name || "alguém"); if (n.length < 2) n.push("quem você ama"); return n.map(x => `Ideias para ${x}`.slice(0, 80)); } },
   { k: "compras", e: "🛒", t: "Compras", d: "Por seção do mercado", rated: false, kw: ["compra"], secs: () => ["Hortifrúti", "Mercearia", "Limpeza", "Casa"] }
 ];
