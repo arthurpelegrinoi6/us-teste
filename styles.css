@@ -573,3 +573,12 @@ a.song-line:active .go{opacity:.7}
 .amb-teste{position:fixed;top:calc(var(--safe-t) + 2px);left:50%;transform:translateX(-50%);z-index:60;background:var(--wine);color:#fff;font-weight:700;font-size:10.5px;letter-spacing:.05em;padding:2px 10px;border-radius:999px;pointer-events:none;opacity:.9;white-space:nowrap}
 @media (prefers-reduced-motion:reduce){.t-feitas .chev{transition:none}}
 .sheet > .btn.ghost + form{margin-top:16px}
+
+.mcard{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);margin:10px 16px 6px;min-height:64px;padding:10px 14px;background:var(--rose);border:1px solid rgba(179,18,42,.16);border-radius:18px;text-align:left;color:var(--ink);box-shadow:0 8px 18px -14px rgba(58,9,16,.5)}
+.mcard .mic{font-size:26px;line-height:1;flex:none}
+.mcard .mbody{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.mcard .mttl{font-weight:700;font-size:16.5px;color:var(--wine)}
+.mcard .msub{font-size:13.5px;color:var(--ink-2)}
+.mcard .mcta{flex:none;min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;background:var(--red);color:#fff;font-weight:700;font-size:14px}
+.mcard .mnext{flex:none;font-size:26px;line-height:1;color:var(--red);padding:0 4px}
+.mcard:active{filter:brightness(.97)}

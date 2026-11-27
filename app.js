@@ -718,35 +718,47 @@ function listPreview(L) {
 /* modelos de lista: seções prontas (sempre dá para editar depois) */
 const anoAtual = () => new Date().getFullYear();
 const MODELOS = [
+  { k: "metas", e: "🎯", t: "Metas do Casal", d: "Por área: saúde, carreira, finanças e mais", rated: false, kw: ["meta"], secs: () => ["Saúde", "Mental", "Carreira", "Finanças", "Relacionamento", "Lazer"] },
   { k: "filmes", e: "🎬", t: "Filmes", d: "Os que vocês assistiram, por ano", rated: true, kw: ["filme"], secs: () => { const a = ["Favoritos"]; for (let y = anoAtual(); y >= 2023; y--) a.push(String(y)); return a; } },
   { k: "series", e: "📺", t: "Séries", d: "Assistindo, favoritas e as que querem ver", rated: true, kw: ["serie"], secs: () => ["Assistindo", "Favoritas", "Queremos ver"] },
   { k: "restaurantes", e: "🍽️", t: "Restaurantes", d: "Os favoritos e os que querem conhecer", rated: true, kw: ["restaurante"], secs: () => ["Favoritos", "Wishlist"] },
   { k: "viagens", e: "✈️", t: "Viagens", d: "As que já fizeram e as que sonham fazer", rated: false, kw: ["viage"], secs: () => ["Viagens feitas", "Wishlist"] },
   { k: "livros", e: "📚", t: "Livros", d: "Lendo, lidos e os que querem ler", rated: true, kw: ["livro"], secs: () => ["Lendo", "Lidos", "Queremos ler"] },
   { k: "programas", e: "🎟️", t: "Programas a dois", d: "O que querem fazer e o que já fizeram", rated: false, kw: ["programa"], secs: () => ["Queremos fazer", "Já fizemos"] },
-  { k: "metas", e: "🎯", t: "Metas", d: "Por área: saúde, carreira, finanças e mais", rated: false, kw: ["meta"], secs: () => ["Saúde", "Mental", "Carreira", "Finanças", "Relacionamento", "Lazer"] },
   { k: "presentes", e: "🎁", t: "Presentes", d: "Ideias para cada um", rated: false, kw: ["presente"], secs: () => { const n = S.members.slice(0, 2).map(m => m.display_name || "alguém"); if (n.length < 2) n.push("quem você ama"); return n.map(x => `Ideias para ${x}`.slice(0, 80)); } },
   { k: "compras", e: "🛒", t: "Compras", d: "Por seção do mercado", rated: false, kw: ["compra"], secs: () => ["Hortifrúti", "Mercearia", "Limpeza", "Casa"] }
 ];
 const semAcento = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const semEmoji = t => String(t).replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
 const modeloDaLista = L => { const t = semAcento(L.title); return MODELOS.find(m => m.kw.some(w => t.includes(w))) || null; };
+function metasLista() {
+  return S.lists.filter(l => l.auto_key !== "tasks" && (modeloDaLista(l) || {}).k === "metas").sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))[0] || null;
+}
+function metasCardHTML() {
+  const L = metasLista();
+  if (!L) return `<button class="mcard" data-sug="metas" aria-label="Criar a lista Metas do Casal"><span class="mic" aria-hidden="true">🎯</span><span class="mbody"><span class="mttl">Metas do Casal</span><span class="msub">O que vocês querem conquistar juntos?</span></span><span class="mcta">Criar metas</span></button>`;
+  const its = S.items.filter(i => i.list_id === L.id), tot = its.length, feitas = its.filter(i => i.done).length;
+  const sub = !tot ? "Escrevam a primeira meta" : (feitas === tot ? "Todas cumpridas" : `${feitas} de ${tot} cumpridas`);
+  return `<button class="mcard" data-list="${L.id}" aria-label="Abrir Metas do Casal. ${sub}"><span class="mic" aria-hidden="true">🎯</span><span class="mbody"><span class="mttl">Metas do Casal</span><span class="msub">${sub}</span></span><span class="mnext" aria-hidden="true">›</span></button>`;
+}
 function sugestoesHTML() {
   const tem = new Set(S.lists.map(l => (modeloDaLista(l) || {}).k));
-  const falta = MODELOS.filter(m => !tem.has(m.k));
+  const falta = MODELOS.filter(m => m.k !== "metas" && !tem.has(m.k));
   if (!falta.length) return "";
   return `<div class="ngroup-h">Sugestões</div><div class="sugs">${falta.map(m => `<button class="sug" data-sug="${m.k}"><span class="e" aria-hidden="true">${m.e}</span>${esc(m.t)}</button>`).join("")}</div><p class="sug-h">Toque para criar a lista na hora, já com as seções.</p>`;
 }
 function listasHTML() {
   if (UI.openList !== null) { const Lo = S.lists.find(l => l.id === UI.openList); const html = Lo && Lo.auto_key === "tasks" ? tarefasHTML() : noteHTML(); if (html) return html; UI.openList = null; }
   const row = L => `<button class="nrow" data-list="${L.id}"><b>${esc(L.title)}</b><span><em>${esc(relDay(L.updated_at))}</em>${esc(listPreview(L))}</span></button>`;
-  const comuns = S.lists.filter(l => l.auto_key !== "tasks");
+  const mL = metasLista();
+  const comuns = S.lists.filter(l => l.auto_key !== "tasks" && !(mL && l.id === mL.id));
   const sorted = [...comuns].sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)));
   const pins = sorted.filter(l => l.pinned), rest = sorted.filter(l => !l.pinned);
   return `<div class="notes-app">
     <div class="nbar" style="background:var(--group)"><span></span><span style="font-weight:600;color:var(--ink-2);font-size:13px">${esc(coupleNames())}</span></div>
     <h1 class="big-title">Listas</h1>
     ${tarefasCardHTML()}
+    ${metasCardHTML()}
     ${!comuns.length ? `<div class="empty-state"><h3>Uma lista para cada vontade</h3><p>Restaurantes para conhecer, filmes, viagens, compras da casa. Toque no lápis para criar a primeira.</p></div>` : ""}
     ${pins.length ? `<div class="ngroup-h">Fixadas</div><div class="ngroup">${pins.map(row).join("")}</div>` : ""}
     ${rest.length ? `<div class="ngroup-h">Do casal</div><div class="ngroup">${rest.map(row).join("")}</div>` : ""}
